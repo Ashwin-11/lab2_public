@@ -10,10 +10,11 @@ namespace MergeSort
         static void Main(string[] args)
         {
 
-            int ARRAY_SIZE = 100;
+            int ARRAY_SIZE = 10;
             int[] arraySingleThread = new int[ARRAY_SIZE];
             int num_processors = Environment.ProcessorCount;
-
+            Console.WriteLine(num_processors);
+            
 
 
 
@@ -31,7 +32,7 @@ namespace MergeSort
             int[] arrayMultiThread= new int[ARRAY_SIZE];
             arraySingleThread.CopyTo(arrayMultiThread, 0);
 
-            //      PrintArray(arrayMultiThread);
+             PrintArray(arraySingleThread);
 
             /*TODO : Use the  "Stopwatch" class to measure the duration of time that
                it takes to sort an array using one-thread merge sort and
@@ -43,9 +44,12 @@ namespace MergeSort
             stopWatch.Start();
 
             MergeSort(arraySingleThread);
+           // Thread.Sleep(224);
 
             //TODO :Stop the stopwatch
             stopWatch.Stop();
+
+            PrintArray(arraySingleThread);
             PrintTime(stopWatch.Elapsed);  // Get the elapsed time as a TimeSpan value, passes it to the print time function
 
             
@@ -101,7 +105,7 @@ namespace MergeSort
                             k++;
                         }
                     }
-
+                return A;
                }
             
 
@@ -118,10 +122,10 @@ namespace MergeSort
                 int[] left = new int[mid];
                 int[] right = new int[A.Length-mid];
 
-                for (int i = 0; i < mid; i++)
+                for (int i = 0; i < (mid); i++)
                     left[i] = A[i];
                 int j = 0;
-                for (int i = mid; i < (A.Length - mid); i++)
+                for (int i = mid; i < (A.Length); i++)
                 {
                     right[j] = A[i];
                     j++;
@@ -129,6 +133,8 @@ namespace MergeSort
                 MergeSort(left);
                 MergeSort(right);
                 Merge(left,right,A);
+
+                return A;
                }
 
    
