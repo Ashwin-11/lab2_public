@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Linq;
+using System.Collections.Generic;
 
 
 namespace MergeSort
@@ -10,10 +12,11 @@ namespace MergeSort
         static void Main(string[] args)
         {
 
-            int ARRAY_SIZE = 10;
+            int ARRAY_SIZE = 24;
+            int num_threads=4;
             int[] arraySingleThread = new int[ARRAY_SIZE];
             int num_processors = Environment.ProcessorCount;
-            Console.WriteLine(num_processors);
+            Console.WriteLine(num_processors);//12 processors
             
 
 
@@ -31,8 +34,9 @@ namespace MergeSort
             // copy array by value.. You can also use array.copy()
             int[] arrayMultiThread= new int[ARRAY_SIZE];
             arraySingleThread.CopyTo(arrayMultiThread, 0);
+           
 
-             PrintArray(arraySingleThread);
+          //   PrintArray(arraySingleThread);
 
             /*TODO : Use the  "Stopwatch" class to measure the duration of time that
                it takes to sort an array using one-thread merge sort and
@@ -40,26 +44,87 @@ namespace MergeSort
             */
 
             //TODO :start the stopwatch
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
+            Stopwatch SingleThreadTime = new Stopwatch();
+            SingleThreadTime.Start();
 
             MergeSort(arraySingleThread);
-           // Thread.Sleep(224);
+            // Thread.Sleep(224);
 
             //TODO :Stop the stopwatch
-            stopWatch.Stop();
+            SingleThreadTime.Stop();
 
             PrintArray(arraySingleThread);
-            PrintTime(stopWatch.Elapsed);  // Get the elapsed time as a TimeSpan value, passes it to the print time function
+            PrintTime(SingleThreadTime.Elapsed);  // Get the elapsed time as a TimeSpan value, passes it to the print time function
 
-            
+
 
             //TODO: Multi Threading Merge Sort
+            // List<List<int>> subArrays = new List<List<int>>();
 
+            Stopwatch MultiThreadTime = new Stopwatch();
+            
 
+            int[][] subArrays = new int[num_threads][];
+              int maxsubArr_len =ARRAY_SIZE/num_threads;
+            int k = 0;
 
+            Console.Write("Sub array of {0} total elements and {1} threads looks like:\n",ARRAY_SIZE,num_threads);
 
+            for (int i = 0; i < num_threads; i++)
+            {
+                k = i * maxsubArr_len;
+                if (i == (num_threads - 1))
+                {
+                    maxsubArr_len = ARRAY_SIZE - (maxsubArr_len * (num_threads - 1));
+                }
+                subArrays[i] = new int[maxsubArr_len];
 
+                for (int j=0; j < maxsubArr_len; j++)
+                {
+                    int x = j + k;
+                    subArrays[i][j] = arrayMultiThread[x];
+                    
+                    Console.Write("{0} ", subArrays[i][j]);
+                }
+                Console.Write("\n");
+            }
+            MultiThreadTime.Start();
+            Thread[] sub_threads = new Thread[num_threads];
+            Console.Write("\n");
+
+            for (int x = 0; x < num_threads; x++)
+            {
+                int m = x;
+                sub_threads[x] = new Thread(() => MergeSort(subArrays[m]));
+                sub_threads[x].Start();
+            }
+
+            for (int x = 0; x < num_threads; x++)
+            {
+                sub_threads[x].Join();
+            }
+            MultiThreadTime.Stop();
+
+            //printing 2d array
+            Console.Write("SORTED subarray of {0} total elements and {1} threads looks like:\n", ARRAY_SIZE, num_threads);
+            maxsubArr_len = ARRAY_SIZE / num_threads;
+
+            for (int i = 0; i < num_threads; i++)
+            {
+              //  k = i * maxsubArr_len;
+                if (i == (num_threads - 1))
+                {
+                    maxsubArr_len = ARRAY_SIZE - (maxsubArr_len * (num_threads - 1));
+                }
+               // subArrays[i] = new int[maxsubArr_len];
+
+                for (int j = 0; j < maxsubArr_len; j++)
+                {
+                    Console.Write("{0} ", subArrays[i][j]);
+                }
+                Console.Write("\n");
+            }
+            //end of printing 2d array
 
 
             /*********************** Methods **********************
@@ -69,7 +134,7 @@ namespace MergeSort
             and constructs a sorted array in the size of combined arrays
             */
 
-              static int[] Merge(int[] LA, int[] RA, int[] A)
+            static int[] SingleThreadMerge(int[] LA, int[] RA, int[] A)
                {
                     int i = 0, j = 0, k = 0;
 
@@ -107,13 +172,14 @@ namespace MergeSort
                     }
                 return A;
                }
-            
+
+
 
             /*
             implement MergeSort method: takes an integer array by reference
             and makes some recursive calls to intself and then sorts the array
             */
-               static int[] MergeSort(int[] A)
+            static int[] MergeSort(int[] A)
                {
                 if (A.Length < 2)
                     return A;
@@ -132,7 +198,7 @@ namespace MergeSort
                 }
                 MergeSort(left);
                 MergeSort(right);
-                Merge(left,right,A);
+                SingleThreadMerge(left,right,A);
 
                 return A;
                }
@@ -169,8 +235,6 @@ namespace MergeSort
                 while (i <= j && ai <= (ai = a[i])) i++;
                 return i > j;
             }
-
-
         }
 
 
