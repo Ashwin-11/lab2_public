@@ -126,6 +126,17 @@ namespace MergeSort
             }
             //end of printing 2d array
 
+            Queue<int[]> Final_Arr = new Queue<int[]>();
+            for (int x = 0; x < num_threads; x++)
+            {
+                Final_Arr.Enqueue(subArrays[x]);
+            }
+            int[] temp1 = new int[ARRAY_SIZE];
+            while (Final_Arr.Count() > 1)
+            {
+                arrayMultiThread =Merge(Final_Arr.Dequeue(), Final_Arr.Dequeue(), temp1);
+                Final_Arr.Enqueue(arrayMultiThread);
+            }
 
             /*********************** Methods **********************
              *****************************************************/
@@ -134,7 +145,7 @@ namespace MergeSort
             and constructs a sorted array in the size of combined arrays
             */
 
-            static int[] SingleThreadMerge(int[] LA, int[] RA, int[] A)
+            static int[] Merge(int[] LA, int[] RA, int[] A)
                {
                     int i = 0, j = 0, k = 0;
 
@@ -198,7 +209,7 @@ namespace MergeSort
                 }
                 MergeSort(left);
                 MergeSort(right);
-                SingleThreadMerge(left,right,A);
+                Merge(left,right,A);
 
                 return A;
                }
