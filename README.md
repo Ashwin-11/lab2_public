@@ -6,7 +6,7 @@ authors: [C. Antonio Sánchez, Ali Mousavifar]
 categories: [labs, threads, multithread, Mergesort]
 usemath: true
 
----
+---leksnklen
 
 # Lab 2 -- Multi-Threading
 {:.no_toc}
